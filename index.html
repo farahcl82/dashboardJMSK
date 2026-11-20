@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dashboard JMSK — PoliBesut</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;background:#f1f5f9;color:#1f2328;font-size:14px;display:flex;min-height:100vh}
+.sidebar{width:220px;min-height:100vh;background:#1d4ed8;color:#fff;display:flex;flex-direction:column;flex-shrink:0}
+.sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid #2563eb}
+.sidebar-logo h2{font-size:15px;font-weight:700}
+.sidebar-logo p{font-size:11px;color:#93c5fd;margin-top:3px}
+.sidebar nav{flex:1;padding:12px 0}
+.nav-item{display:flex;align-items:center;gap:10px;padding:11px 20px;font-size:13px;color:#bfdbfe;cursor:pointer;transition:.15s}
+.nav-item:hover{background:#2563eb;color:#fff}
+.nav-item.active{background:#1e3a8a;color:#fff;font-weight:600;border-right:3px solid #fff}
+.sidebar-footer{padding:14px 20px;border-top:1px solid #2563eb;font-size:11px;color:#60a5fa}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.navbar{height:54px;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0}
+.navbar-left{font-size:15px;font-weight:600;color:#374151}
+.navbar-right{display:flex;align-items:center;gap:12px}
+.user-info .name{font-size:13px;font-weight:600;color:#1f2937}
+.user-info .role{font-size:11px;color:#6b7280}
+.avatar{width:34px;height:34px;border-radius:50%;background:#1d4ed8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.btn-logout{font-size:12px;color:#9ca3af;cursor:pointer;border:1px solid #e5e7eb;padding:5px 10px;border-radius:6px}
+.content{flex:1;overflow-y:auto;padding:24px 24px 60px}
+.page-title{margin-bottom:20px}
+.page-title h1{font-size:18px;font-weight:700;color:#111827}
+.page-title p{font-size:13px;color:#6b7280;margin-top:3px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.card{border-radius:10px;border:1px solid;padding:18px;display:flex;align-items:center;gap:14px}
+.card-blue{background:#eff6ff;border-color:#bfdbfe}
+.card-green{background:#f0fdf4;border-color:#bbf7d0}
+.card-yellow{background:#fefce8;border-color:#fde68a}
+.card-purple{background:#faf5ff;border-color:#e9d5ff}
+.card-icon{font-size:28px}
+.card-label{font-size:12px;font-weight:500;color:#6b7280}
+.card-value{font-size:24px;font-weight:700;margin-top:2px}
+.card-blue .card-value{color:#1d4ed8}
+.card-green .card-value{color:#16a34a}
+.card-yellow .card-value{color:#d97706}
+.card-purple .card-value{color:#7c3aed}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px}
+.chart-box{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:18px}
+.chart-box h3{font-size:13px;font-weight:600;color:#374151;margin-bottom:14px}
+.bar-chart{display:flex;align-items:flex-end;gap:16px;height:150px;padding-top:10px}
+.bar-group{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1}
+.bar{width:100%;border-radius:4px 4px 0 0}
+.bar-label{font-size:10px;color:#6b7280;text-align:center}
+.bar-val{font-size:11px;color:#374151;font-weight:600}
+.pie-wrap{display:flex;align-items:center;justify-content:center;gap:24px}
+.donut{position:relative;width:120px;height:120px}
+.donut svg{transform:rotate(-90deg)}
+.donut-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.donut-pct{font-size:20px;font-weight:700;color:#16a34a}
+.donut-sub{font-size:10px;color:#6b7280}
+.legend{display:flex;flex-direction:column;gap:8px}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:12px;color:#374151}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.table-box{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;margin-bottom:16px}
+.table-header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid #f3f4f6}
+.table-header h3{font-size:13px;font-weight:600;color:#374151}
+.btn-add{background:#1d4ed8;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#f9fafb;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:10px 16px;text-align:left;font-weight:600}
+td{padding:11px 16px;border-top:1px solid #f3f4f6;color:#374151}
+tr:hover td{background:#f9fafb}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500}
+.badge-green{background:#dcfce7;color:#15803d}
+.badge-red{background:#fee2e2;color:#dc2626}
+.badge-yellow{background:#fef9c3;color:#a16207}
+.progress-wrap{display:flex;align-items:center;gap:8px}
+.progress-bar{flex:1;height:7px;background:#e5e7eb;border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;border-radius:999px}
+.section{display:none}
+.section.active{display:block}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <h2>Dashboard JMSK</h2>
+    <p>Politeknik Besut</p>
+  </div>
+  <nav>
+    <div class="nav-item active" onclick="tukar('dashboard',this)">🏠 Dashboard</div>
+    <div class="nav-item" onclick="tukar('pensyarah',this)">👨‍🏫 Pensyarah</div>
+    <div class="nav-item" onclick="tukar('pelajar',this)">🎓 Pelajar</div>
+    <div class="nav-item" onclick="tukar('kursus',this)">📚 Kursus</div>
+    <div class="nav-item" onclick="tukar('kehadiran',this)">✅ Kehadiran</div>
+    <div class="nav-item" onclick="tukar('markah',this)">📝 Markah</div>
+    <div class="nav-item" onclick="tukar('laporan',this)">📊 Laporan</div>
+  </nav>
+  <div class="sidebar-footer">v1.0.0 — Sesi 2024/2025</div>
+</div>
+
+<div class="main">
+  <div class="navbar">
+    <div class="navbar-left" id="page-title">Dashboard</div>
+    <div class="navbar-right">
+      <div class="user-info">
+        <div class="name">Dr. Ahmad Fadzli bin Hassan</div>
+        <div class="role">Ketua Jabatan</div>
+      </div>
+      <div class="avatar">A</div>
+      <div class="btn-logout">⬡ Keluar</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="section active" id="sec-dashboard">
+      <div class="page-title">
+        <h1>Dashboard</h1>
+        <p>Selamat datang, Dr. Ahmad Fadzli bin Hassan — JMSK PoliBesut</p>
+      </div>
+      <div class="cards">
+        <div class="card card-blue"><div class="card-icon">👨‍🏫</div><div><div class="card-label">Jumlah Pensyarah</div><div class="card-value">2</div></div></div>
+        <div class="card card-green"><div class="card-icon">🎓</div><div><div class="card-label">Jumlah Pelajar</div><div class="card-value">5</div></div></div>
+        <div class="card card-yellow"><div class="card-icon">📚</div><div><div class="card-label">Kursus Aktif</div><div class="card-value">3</div></div></div>
+        <div class="card card-purple"><div class="card-icon">✅</div><div><div class="card-label">Purata Kehadiran</div><div class="card-value">78%</div></div></div>
+      </div>
+      <div class="charts">
+        <div class="chart-box">
+          <h3>Purata Markah Per Kursus</h3>
+          <div class="bar-chart">
+            <div class="bar-group"><div class="bar-val">76%</div><div class="bar" style="height:110px;background:#1d4ed8"></div><div class="bar-label">DBM10143</div></div>
+            <div class="bar-group"><div class="bar-val">82%</div><div class="bar" style="height:122px;background:#2563eb"></div><div class="bar-label">DBM10113</div></div>
+            <div class="bar-group"><div class="bar-val">69%</div><div class="bar" style="height:100px;background:#3b82f6"></div><div class="bar-label">DCS10113</div></div>
+          </div>
+        </div>
+        <div class="chart-box">
+          <h3>Taburan Kehadiran Pelajar</h3>
+          <div class="pie-wrap">
+            <div class="donut">
+              <svg width="120" height="120" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="45" fill="none" stroke="#e5e7eb" stroke-width="18"/>
+                <circle cx="60" cy="60" r="45" fill="none" stroke="#16a34a" stroke-width="18" stroke-dasharray="220 283" stroke-dashoffset="0"/>
+                <circle cx="60" cy="60" r="45" fill="none" stroke="#dc2626" stroke-width="18" stroke-dasharray="40 283" stroke-dashoffset="-220"/>
+                <circle cx="60" cy="60" r="45" fill="none" stroke="#d97706" stroke-width="18" stroke-dasharray="23 283" stroke-dashoffset="-260"/>
+              </svg>
+              <div class="donut-label"><div class="donut-pct">78%</div><div class="donut-sub">Hadir</div></div>
+            </div>
+            <div class="legend">
+              <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div>Hadir (78%)</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#dc2626"></div>Tidak Hadir (14%)</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#d97706"></div>MC (8%)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PENSYARAH -->
+    <div class="section" id="sec-pensyarah">
+      <div class="page-title"><h1>Pengurusan Pensyarah</h1></div>
+      <div class="table-box">
+        <div class="table-header"><h3>Senarai Pensyarah JMSK</h3><button class="btn-add">+ Tambah Pensyarah</button></div>
+        <table>
+          <thead><tr><th>Nama</th><th>Email</th><th>No. Pekerja</th><th>Opsyen</th><th>Status</th><th>Tindakan</th></tr></thead>
+          <tbody>
+            <tr><td><b>Pn. Siti Norfaizah binti Yusof</b></td><td>siti.norfaizah@polibesut.edu.my</td><td>P20150045</td><td>Matematik</td><td><span class="badge badge-green">Aktif</span></td><td><span style="color:#1d4ed8;cursor:pointer;margin-right:8px">Edit</span><span style="color:#dc2626;cursor:pointer">Padam</span></td></tr>
+            <tr><td><b>En. Mohd Khairul bin Azman</b></td><td>khairul.azman@polibesut.edu.my</td><td>P20180062</td><td>Sains Komputer</td><td><span class="badge badge-green">Aktif</span></td><td><span style="color:#1d4ed8;cursor:pointer;margin-right:8px">Edit</span><span style="color:#dc2626;cursor:pointer">Padam</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PELAJAR -->
+    <div class="section" id="sec-pelajar">
+      <div class="page-title"><h1>Pengurusan Pelajar</h1></div>
+      <div class="table-box">
+        <div class="table-header"><h3>Senarai Pelajar DIT</h3><button class="btn-add">+ Tambah Pelajar</button></div>
+        <table>
+          <thead><tr><th>Nama</th><th>No. Matrik</th><th>Program</th><th>Semester</th><th>Sesi</th><th>Tindakan</th></tr></thead>
+          <tbody>
+            <tr><td><b>Nurul Ain binti Zakaria</b></td><td>DIT231001</td><td>DIT</td><td>3</td><td>2024/2025</td><td><span style="color:#1d4ed8;cursor:pointer;margin-right:8px">Edit</span><span style="color:#dc2626;cursor:pointer">Padam</span></td></tr>
+            <tr><td><b>Muhammad Haziq bin Rosli</b></td><td>DIT231002</td><td>DIT</td><td>3</td><td>2024/2025</td><td><span style="color:#1d4ed8;cursor:pointer;margin-right:8px">Edit</span><span style="color:#dc2626;cursor:pointer">Padam</span></td></tr>
+            <tr><td><b>Farah Nabilah binti Ismail</b></td><td>DIT231003</td><td>DIT</td><td>3</td><td>2024/2025</td><td><span style="color:#1d4ed8;cursor:pointer;margin-right:8px">Edit</span><span style="color:#dc2626;cursor:pointer">Padam</span></td></tr>
+            <tr><td><b>Amirul Hafiz bin Daud</b></td><td>DIT231004</td><td>DIT</td><td>3</td><td>2024/2025</td><td><span style="color:#1d4ed8;cursor:pointer;margin-right:8px">Edit</span><span style="color:#dc2626;cursor:pointer">Padam</span></td></tr>
+            <tr><td><b>Siti Mariam binti Noor</b></td><td>DIT231005</td><td>DIT</td><td>3</td><td>2024/2025</td><td><span style="color:#1d4ed8;cursor:pointer;margin-right:8px">Edit</span><span style="color:#dc2626;cursor:pointer">Padam</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- KURSUS -->
+    <div class="section" id="sec-kursus">
+      <div class="page-title"><h1>Pengurusan Kursus</h1></div>
+      <div class="table-box">
+        <div class="table-header"><h3>Senarai Kursus JMSK</h3><button class="btn-add">+ Tambah Kursus</button></div>
+        <table>
+          <thead><tr><th>Kod</th><th>Nama Kursus</th><th>Pensyarah</th><th>Kredit</th><th>Sesi</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td style="font-family:monospace;color:#1d4ed8;font-weight:600">DBM10143</td><td>Calculus and Algebra</td><td>Pn. Siti Norfaizah</td><td>3</td><td>2024/2025</td><td><span class="badge badge-green">Aktif</span></td></tr>
+            <tr><td style="font-family:monospace;color:#1d4ed8;font-weight:600">DBM10113</td><td>Engineering Mathematics 1</td><td>Pn. Siti Norfaizah</td><td>3</td><td>2024/2025</td><td><span class="badge badge-green">Aktif</span></td></tr>
+            <tr><td style="font-family:monospace;color:#1d4ed8;font-weight:600">DCS10113</td><td>Introduction to Programming</td><td>En. Mohd Khairul</td><td>3</td><td>2024/2025</td><td><span class="badge badge-green">Aktif</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- KEHADIRAN -->
+    <div class="section" id="sec-kehadiran">
+      <div class="page-title"><h1>Rekod Kehadiran</h1><p>Kursus: DBM10143 — Calculus and Algebra</p></div>
+      <div class="table-box">
+        <div class="table-header"><h3>Kehadiran Pelajar (Minggu 1–3)</h3></div>
+        <table>
+          <thead><tr><th>Pelajar</th><th>No. Matrik</th><th>Minggu 1</th><th>Minggu 2</th><th>Minggu 3</th><th>% Hadir</th></tr></thead>
+          <tbody>
+            <tr><td><b>Nurul Ain</b></td><td>DIT231001</td><td><span class="badge badge-green">Hadir</span></td><td><span class="badge badge-green">Hadir</span></td><td><span class="badge badge-red">T.Hadir</span></td><td><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:67%;background:#d97706"></div></div>67%</div></td></tr>
+            <tr><td><b>Haziq Rosli</b></td><td>DIT231002</td><td><span class="badge badge-green">Hadir</span></td><td><span class="badge badge-yellow">MC</span></td><td><span class="badge badge-green">Hadir</span></td><td><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:67%;background:#d97706"></div></div>67%</div></td></tr>
+            <tr><td><b>Farah Nabilah</b></td><td>DIT231003</td><td><span class="badge badge-green">Hadir</span></td><td><span class="badge badge-green">Hadir</span></td><td><span class="badge badge-green">Hadir</span></td><td><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%;background:#16a34a"></div></div>100%</div></td></tr>
+            <tr><td><b>Amirul Hafiz</b></td><td>DIT231004</td><td><span class="badge badge-green">Hadir</span></td><td><span class="badge badge-green">Hadir</span></td><td><span class="badge badge-green">Hadir</span></td><td><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%;background:#16a34a"></div></div>100%</div></td></tr>
+            <tr><td><b>Siti Mariam</b></td><td>DIT231005</td><td><span class="badge badge-red">T.Hadir</span></td><td><span class="badge badge-green">Hadir</span></td><td><span class="badge badge-green">Hadir</span></td><td><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:67%;background:#d97706"></div></div>67%</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MARKAH -->
+    <div class="section" id="sec-markah">
+      <div class="page-title"><h1>Rekod Markah</h1><p>Kursus: DBM10143 — Calculus and Algebra</p></div>
+      <div class="table-box">
+        <div class="table-header"><h3>Markah Pelajar</h3></div>
+        <table>
+          <thead><tr><th>Pelajar</th><th>No. Matrik</th><th>Ujian 1</th><th>Tugasan 1</th><th>Ujian 2</th><th>Tugasan 2</th><th>Purata</th><th>Gred</th></tr></thead>
+          <tbody>
+            <tr><td><b>Nurul Ain</b></td><td>DIT231001</td><td>72</td><td>85</td><td>68</td><td>90</td><td>78.8%</td><td style="color:#1d4ed8;font-weight:700">B+</td></tr>
+            <tr><td><b>Haziq Rosli</b></td><td>DIT231002</td><td>55</td><td>78</td><td>62</td><td>—</td><td>65.0%</td><td style="color:#2563eb;font-weight:700">B-</td></tr>
+            <tr><td><b>Farah Nabilah</b></td><td>DIT231003</td><td>88</td><td>92</td><td>80</td><td>—</td><td>86.7%</td><td style="color:#16a34a;font-weight:700">A+</td></tr>
+            <tr><td><b>Amirul Hafiz</b></td><td>DIT231004</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+            <tr><td><b>Siti Mariam</b></td><td>DIT231005</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- LAPORAN -->
+    <div class="section" id="sec-laporan">
+      <div class="page-title"><h1>Laporan Jabatan</h1></div>
+      <div class="charts">
+        <div class="chart-box">
+          <h3>Purata Markah Per Kursus</h3>
+          <div class="bar-chart">
+            <div class="bar-group"><div class="bar-val">76%</div><div class="bar" style="height:110px;background:#1d4ed8"></div><div class="bar-label">DBM10143</div></div>
+            <div class="bar-group"><div class="bar-val">82%</div><div class="bar" style="height:122px;background:#2563eb"></div><div class="bar-label">DBM10113</div></div>
+            <div class="bar-group"><div class="bar-val">69%</div><div class="bar" style="height:100px;background:#3b82f6"></div><div class="bar-label">DCS10113</div></div>
+          </div>
+        </div>
+        <div class="chart-box">
+          <h3>Laporan Kehadiran — DBM10143</h3>
+          <table style="margin-top:4px">
+            <thead><tr><th>Pelajar</th><th>Hadir</th><th>T.Hadir</th><th>MC</th><th>%</th></tr></thead>
+            <tbody>
+              <tr><td>Nurul Ain</td><td style="color:#16a34a;font-weight:600">2</td><td style="color:#dc2626">1</td><td>0</td><td style="color:#d97706;font-weight:600">67%</td></tr>
+              <tr><td>Haziq Rosli</td><td style="color:#16a34a;font-weight:600">2</td><td>0</td><td style="color:#d97706">1</td><td style="color:#d97706;font-weight:600">67%</td></tr>
+              <tr><td>Farah Nabilah</td><td style="color:#16a34a;font-weight:600">3</td><td>0</td><td>0</td><td style="color:#16a34a;font-weight:600">100%</td></tr>
+              <tr><td>Amirul Hafiz</td><td style="color:#16a34a;font-weight:600">3</td><td>0</td><td>0</td><td style="color:#16a34a;font-weight:600">100%</td></tr>
+              <tr><td>Siti Mariam</td><td style="color:#16a34a;font-weight:600">2</td><td style="color:#dc2626">1</td><td>0</td><td style="color:#d97706;font-weight:600">67%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function tukar(id, el) {
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  document.getElementById('sec-' + id).classList.add('active');
+  el.classList.add('active');
+  var tajuk = {dashboard:'Dashboard',pensyarah:'Pensyarah',pelajar:'Pelajar',kursus:'Kursus',kehadiran:'Kehadiran',markah:'Markah',laporan:'Laporan'};
+  document.getElementById('page-title').textContent = tajuk[id];
+}
+</script>
+</body>
+</html>
